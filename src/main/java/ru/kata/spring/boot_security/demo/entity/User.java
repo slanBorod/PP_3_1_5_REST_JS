@@ -1,28 +1,49 @@
 package ru.kata.spring.boot_security.demo.entity;
 
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.management.relation.Role;
 import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Table(name = "t_user")
+@Data
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Size(min = 2, message = "Не меньше 5 знаков")
     private String username;
+
+    private String email;
     @Size(min = 2, message = "Не меньше 5 знаков")
     private String password;
-    @Transient
+    private boolean enabled;
+//    @Transient
     private String passwordConfirm;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Role> roles;
+
+//    @Transient
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
+
+
+    public User(String username, String password, List<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public User() {}
 
@@ -48,7 +69,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -58,12 +80,9 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getPasswordConfirm() {
         return passwordConfirm;
@@ -72,12 +91,5 @@ public class User implements UserDetails {
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 }
+
