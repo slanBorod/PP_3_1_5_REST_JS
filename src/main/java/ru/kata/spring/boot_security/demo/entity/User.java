@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.entity;
 
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,17 +14,15 @@ import java.util.*;
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
-    @Size(min = 2, message = "Не меньше 5 знаков")
     private String username;
 
     private String email;
-    @Size(min = 2, message = "Не меньше 5 знаков")
     private String password;
     private boolean enabled;
-//    @Transient
+    @Transient
     private String passwordConfirm;
 
-//    @Transient
+    @Transient
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "users_roles",
@@ -84,12 +81,12 @@ public class User implements UserDetails {
     }
 
 
-    public String getPasswordConfirm() {
-        return passwordConfirm;
-    }
+//    public String getPasswordConfirm() {
+//        return passwordConfirm;
+//    }
 
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
+//    public void setPasswordConfirm(String passwordConfirm) {
+//        this.passwordConfirm = passwordConfirm;
+//    }
 }
 

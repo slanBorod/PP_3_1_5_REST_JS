@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessUserHandler successUserHandler;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -101,9 +101,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.userDetailsService(userService)
 //                .passwordEncoder(getPasswordEncoder());
 //    }
-    @Bean
-    UserDetailsService userDetailsService(UserRepository userRepo) {
-        return username -> userRepo.findByUsername(username);
-    }
+//    @Bean
+//    UserDetailsService userDetailsService(UserRepository userRepo) {
+//        return username -> userRepo.findByUsername(username);
+//    }
 
 }

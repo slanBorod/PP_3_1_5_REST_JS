@@ -23,8 +23,8 @@ public class UserService implements UserDetailsService {
     @PersistenceContext
     private EntityManager em;
 
-    private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     @Autowired
     private final PasswordEncoder passwordEncoder;
