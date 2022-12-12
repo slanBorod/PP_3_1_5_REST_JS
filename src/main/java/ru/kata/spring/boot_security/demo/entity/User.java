@@ -5,25 +5,24 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.management.relation.Role;
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String username;
-
     private String email;
     private String password;
     private boolean enabled;
-    @Transient
-    private String passwordConfirm;
 
-    @Transient
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "users_roles",
         joinColumns = @JoinColumn(name = "user_id"),
@@ -31,16 +30,12 @@ public class User implements UserDetails {
     private List<Role> roles = new ArrayList<>();
 
 
-    public User(String username, String password, List<Role> roles) {
+    public User(String username, String email, String password) {
         this.username = username;
+        this.email = email;
         this.password = password;
-        this.roles = roles;
     }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
 
     public User() {}
 
@@ -67,7 +62,19 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getRolesName() {
+        List<Role> roles = getRoles();
+        List<String> resultRole = new ArrayList<>();
+        for(Role role : roles) {
+            resultRole.add(
+                    role.getName().replaceFirst("ROLE_", "")) ;
+        }
+        return resultRole;
     }
 
     @Override
@@ -80,13 +87,5 @@ public class User implements UserDetails {
         return username;
     }
 
-
-//    public String getPasswordConfirm() {
-//        return passwordConfirm;
-//    }
-
-//    public void setPasswordConfirm(String passwordConfirm) {
-//        this.passwordConfirm = passwordConfirm;
-//    }
 }
 
