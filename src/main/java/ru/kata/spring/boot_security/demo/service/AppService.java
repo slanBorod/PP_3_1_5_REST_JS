@@ -46,7 +46,7 @@ public class AppService implements UserDetailsService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.getAllUsers();
     }
 
     @Transactional

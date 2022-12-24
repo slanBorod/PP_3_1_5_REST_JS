@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.entity;
 
 import lombok.Data;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 @Entity
 @Data
 @Table(name = "users")
+@RestResource(rel = "users", path = "users")
 public class User implements UserDetails {
     @Id
     @Column(name = "user_id")
@@ -20,7 +22,6 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
-    private boolean enabled;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -86,6 +87,9 @@ public class User implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+
+    public String getEmail() { return email;}
 
 }
 

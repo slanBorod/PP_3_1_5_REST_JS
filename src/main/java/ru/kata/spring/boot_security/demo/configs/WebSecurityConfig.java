@@ -9,13 +9,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.client.RestTemplate;
 import ru.kata.spring.boot_security.demo.service.MyUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final MyUserDetailsService myUserDetailsService;
+   private final MyUserDetailsService myUserDetailsService;
     private final SuccessUserHandler successUserHandler;
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,25 +39,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/login", "/registration").permitAll()
-                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
                 .formLogin()
                 .loginPage("/login")
-                .usernameParameter("email")
                 .successHandler(successUserHandler)
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .permitAll()
                 .and()
                 .logout()
-                .logoutSuccessUrl("/")
-                .permitAll();
+                .permitAll()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout")
+                .and()
+                .csrf().disable();
+        http    .authorizeRequests()
+                .antMatchers("/login").anonymous()
+                .antMatchers("user").hasRole("USER")
+                .antMatchers("/**").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
     }
 }

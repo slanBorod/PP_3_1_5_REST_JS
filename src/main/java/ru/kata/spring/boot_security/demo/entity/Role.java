@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.entity;
 
 import lombok.Data;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "roles")
+@RestResource(rel = "roles", path = "roles")
 public class Role implements GrantedAuthority {
     @Id
     @Column(name = "role_id")
@@ -23,6 +25,11 @@ public class Role implements GrantedAuthority {
     public Role() {}
 
     public Role(String name) {
+        this.name = name;
+    }
+
+    public Role(Integer id, String name) {
+        this.id = id;
         this.name = name;
     }
 
