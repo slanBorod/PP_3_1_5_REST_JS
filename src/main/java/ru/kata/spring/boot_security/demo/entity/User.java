@@ -13,8 +13,7 @@ import java.util.stream.Collectors;
 @Entity
 @Data
 @Table(name = "users")
-@RestResource(rel = "users", path = "users")
-public class User implements UserDetails {
+public class User {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,27 +39,7 @@ public class User implements UserDetails {
 
     public User() {}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         return roles.stream()
@@ -78,16 +57,13 @@ public class User implements UserDetails {
         return resultRole;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
-
 
     public String getEmail() { return email;}
 

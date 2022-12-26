@@ -149,7 +149,7 @@ function getFormData(form) {
 
     var user = {
         id: $(form + ' input[name="id"]').val(),
-        Username: $(form + ' input[name="Username"]').val(),
+        username: $(form + ' input[name="username"]').val(),
         password: $(form + ' input[name="password"]').val(),
         email: $(form + ' input[name="email"]').val(),
         roles: selectedRoles

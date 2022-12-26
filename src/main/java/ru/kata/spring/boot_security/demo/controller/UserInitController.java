@@ -5,19 +5,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.service.AppService;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 @Controller
 @RequestMapping("/")
-public class MyRestController {
+public class UserInitController {
 
-    private final AppService appService;
+    private final UserService userService;
 
 
-
-    public MyRestController(AppService appService) {
-        this.appService = appService;
-        ;
+    public UserInitController(UserService userService) {
+        this.userService = userService;
     }
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
@@ -25,23 +23,22 @@ public class MyRestController {
         return "login";
     }
 
-
     @GetMapping("/user")
     public String getCurrentUserInfo(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("user", appService.getUserByEmail(user.getEmail()));
+        model.addAttribute("user", userService.getUserByEmail(user.getEmail()));
         return "show";
     }
 
     @GetMapping("/admin/users")
     public String getAllUsers(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("user", appService.getUserByEmail(user.getEmail()));
+        model.addAttribute("user", userService.getUserByEmail(user.getEmail()));
 
         return "index";
     }
 
     @PostMapping("/users")
     public User addNewUser(@RequestBody User user) {
-        appService.saveUser(user);
+        userService.saveUser(user);
         return user;
     }
 }

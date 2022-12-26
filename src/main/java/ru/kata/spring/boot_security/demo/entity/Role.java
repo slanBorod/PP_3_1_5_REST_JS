@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "roles")
-@RestResource(rel = "roles", path = "roles")
 public class Role implements GrantedAuthority {
     @Id
     @Column(name = "role_id")
